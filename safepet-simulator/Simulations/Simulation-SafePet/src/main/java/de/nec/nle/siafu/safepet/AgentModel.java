@@ -126,13 +126,24 @@ public class AgentModel extends BaseAgentModel {
 			throw new RuntimeException(e);
 		}
 
-		dog = population.iterator().next();
+		dog = population.get(0);
 		dog.setName("dog-100");
 		dog.setImage("Dog");
 		dog.setPos(placeHome.getPos());
-		dog.setVisible(true);
 		dog.setSpeed(2);
 		dog.getControl();
+
+		Agent horse = population.get(1);
+		horse.setName("horse-103");
+		horse.setImage("Horse");
+		horse.setPos(placeOneZumbi.getPos());
+		horse.setSpeed(10);
+
+		Agent duck = population.get(2);
+		duck.setName("duck-104");
+		duck.setImage("Duck");
+		duck.setPos(placeTwoZumbi.getPos());
+		duck.setSpeed(10);
 
 		return population;
 	}
