@@ -152,6 +152,18 @@ public class AgentModel extends BaseAgentModel {
 		cat.setSpeed(10);
 		cat.getControl();
 
+		Agent horseTwo = population.get(4);
+		horseTwo.setName("horse-108");
+		horseTwo.setImage("Horse");
+		horseTwo.setPos(placeOneZumbi.getPos());
+		horseTwo.setSpeed(10);
+
+		Agent duckTwo = population.get(5);
+		duckTwo.setName("duck-110");
+		duckTwo.setImage("Duck");
+		duckTwo.setPos(placeTwoZumbi.getPos());
+		duckTwo.setSpeed(10);
+
 
 		return population;
 	}
