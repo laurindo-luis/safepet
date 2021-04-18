@@ -1,1 +1,2 @@
-.idea
+# ignorar diretórios com arquivos de metadados
+.idea/
