@@ -17,7 +17,7 @@
     <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils-core:1.8.0" level="project" />
     <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.6" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.6" level="project" />
     <orderEntry type="library" name="Maven: swt:jface:3.0.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: swt:runtime:3.0.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: swt:osgi:3.0.1" level="project" />
