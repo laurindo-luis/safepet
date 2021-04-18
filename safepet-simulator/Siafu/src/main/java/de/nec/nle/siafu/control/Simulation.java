@@ -21,6 +21,7 @@ package de.nec.nle.siafu.control;
 
 import java.util.Calendar;
 
+import de.nec.nle.siafu.mqtt.BrokerManager;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.XMLConfiguration;
 
@@ -277,8 +278,35 @@ public class Simulation implements Runnable {
 	 * controlled by the user.
 	 * 
 	 */
+	BrokerManager brokerManager = new BrokerManager();
+
+	private void publishAgentCoordinateBroker(Agent a) {
+		String latitude = String.valueOf(a.getPos().getCoordinates()[0])
+				.replace(",", ".");
+		String longitude = String.valueOf(a.getPos().getCoordinates()[1])
+				.replace(",", ".");
+
+		//Quebrando a string de nome do agente em Id e Nome
+		String[] idNameAgent = a.getName().split("-");
+
+		//Coordenada do Agente
+		String coordenada = String.format("%s, %s", latitude, longitude);
+
+		//Visualizar as coordenadas no terminal
+//		System.out.println(
+//				String.format("Agente: %s - Coordenada: %s", a.getName(), coordenada));
+
+		brokerManager.publish(
+				String.format("%s/%s/sensor/gps", idNameAgent[0], idNameAgent[1]),
+				coordenada
+		);
+	}
+
 	private void moveAgents() {
 		for (Agent a : world.getPeople()) {
+
+			publishAgentCoordinateBroker(a);
+
 			if (!isPaused() || !a.isOnAuto()) {
 				a.moveTowardsDestination();
 			}
