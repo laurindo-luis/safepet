@@ -19,13 +19,11 @@
 
 package de.nec.nle.siafu.safepet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import de.nec.nle.siafu.exceptions.PlaceNotFoundException;
 import de.nec.nle.siafu.model.Agent;
+import de.nec.nle.siafu.model.Place;
 import de.nec.nle.siafu.model.World;
 import de.nec.nle.siafu.types.Publishable;
 import de.nec.nle.siafu.types.Text;
@@ -39,6 +37,8 @@ import static de.nec.nle.siafu.safepet.Constants.Fields.ACTIVITY;
  * 
  */
 final class AgentGenerator {
+
+	private static int idPet = 0;
 
 	/**
 	 * A random number generator.
@@ -55,17 +55,12 @@ final class AgentGenerator {
 	 * @param world the world to create it in
 	 * @return the new agent
 	 */
-	public static Agent createRandomAgent(final World world) {
-		try {
-			Agent a = new Agent(world.getRandomPlaceOfType("Home")
-						.getPos(), "", world);
-			a.set(ACTIVITY, Constants.Activity.WALKING);
-			a.setVisible(true);
-			return a;
-		} catch (PlaceNotFoundException e) {
-			throw new RuntimeException(
-					"You didn't define the \"PointOne\" type of places", e);
-		}
+	public static Agent createRandomAgent(final World world, Place place, String namePet, String typePet) {
+		Agent a = new Agent(place.getPos(), typePet, world);
+		a.set(ACTIVITY, Constants.Activity.WALKING);
+		a.setName(namePet);
+		a.setVisible(true);
+		return a;
 	}
 
 	/**
@@ -76,11 +71,36 @@ final class AgentGenerator {
 	 * @return an ArrayList with the created agents
 	 */
 	public static ArrayList<Agent> createRandomPopulation(
-			final int amount, final World world) {
-		ArrayList<Agent> population = new ArrayList<Agent>(amount);
-		for (int i = 0; i < amount; i++) {
-			population.add(createRandomAgent(world));
-		}
+			final int amount, List<Place> places, final World world) {
+		ArrayList<Agent> population = new ArrayList<>();
+
+		places.forEach(place -> {
+			String typePet = "";
+			String namePlace = place.getName().split("-")[0];
+
+			if(namePlace.equals("PlaceOneZumbi"))
+				typePet = "Dog";
+			else if(namePlace.equals("PlaceTwoZumbi"))
+				typePet = "cat";
+			else if(namePlace.equals("PlaceThreeZumbi"))
+				typePet = "Horse";
+			else if(namePlace.equals("PlaceFourZumbi"))
+				typePet = "Dog";
+			else if(namePlace.equals("PlaceFiveZumbi"))
+				typePet = "cat";
+			else if(namePlace.equals("PlaceSixZumbi"))
+				typePet = "Horse";
+			else if(namePlace.equals("PlaceSevenZumbi"))
+				typePet = "Dog";
+
+			for(int i = 0; i < amount; i++) {
+				String namePet = String.format("%s-%d", typePet.toLowerCase(), idPet++);
+				population.add(createRandomAgent(world, place, namePet, typePet));
+			}
+
+			System.out.println("Place = "+namePlace);
+		});
+
 		return population;
 	}
 
