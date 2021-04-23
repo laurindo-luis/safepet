@@ -22,12 +22,7 @@ package de.nec.nle.siafu.safepet;
 import static de.nec.nle.siafu.safepet.Constants.POPULATION;
 import static de.nec.nle.siafu.safepet.Constants.Fields.ACTIVITY;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
+import java.util.*;
 
 import de.nec.nle.siafu.behaviormodels.BaseAgentModel;
 import de.nec.nle.siafu.exceptions.PlaceTypeUndefinedException;
@@ -36,7 +31,6 @@ import de.nec.nle.siafu.model.Place;
 import de.nec.nle.siafu.model.World;
 import de.nec.nle.siafu.safepet.Constants.Activity;
 import de.nec.nle.siafu.types.EasyTime;
-import de.nec.nle.siafu.types.Text;
 
 /**
  * This Agent Model defines the behavior of users in this test simulation.
@@ -68,7 +62,6 @@ public class AgentModel extends BaseAgentModel {
 	 * A special user that plays a courrier of the Czar.
 	 */
 	private Agent dog;
-	private Agent cat;
 
 	/**
 	 * The current time.
@@ -77,15 +70,15 @@ public class AgentModel extends BaseAgentModel {
 
 	/** Place one in the simulation. */
 	private Place placeHome;
-	private Place placeOne;
-	private Place placeTwo;
-	private Place placeThree;
-	private Place placeFour;
-	private Place placeFive;
-	private Place placeSix;
-	private Place placeSeven;
 	private Place placeOneZumbi;
 	private Place placeTwoZumbi;
+	private Place placeThreeZumbi;
+	private Place placeFourZumbi;
+	private Place placeFiveZumbi;
+	private Place placeSixZumbi;
+	private Place placeSevenZumbi;
+
+	private List<Place> places;
 
 	/** Place two in the simulation. */
 
@@ -108,23 +101,27 @@ public class AgentModel extends BaseAgentModel {
 	 */
 	public ArrayList<Agent> createAgents() {
 		world.stopSpinning(true);
-		System.out.println("Creating " + POPULATION + " pet.");
-		ArrayList<Agent> population = AgentGenerator.createRandomPopulation(POPULATION, world);
 
 		try {
 			placeHome = world.getPlacesOfType("Home").iterator().next();
-			placeOne = world.getPlacesOfType("PointOne").iterator().next();
-			placeTwo = world.getPlacesOfType("PointTwo").iterator().next();
-			placeThree = world.getPlacesOfType("PointThree").iterator().next();
-			placeFour = world.getPlacesOfType("PointFour").iterator().next();
-			placeFive = world.getPlacesOfType("PointFive").iterator().next();
-			placeSix = world.getPlacesOfType("PointSix").iterator().next();
-			placeSeven = world.getPlacesOfType("PointSeven").iterator().next();
-			placeOneZumbi = world.getPlacesOfType("PointOneZumbi").iterator().next();
-			placeTwoZumbi = world.getPlacesOfType("PointTwoZumbi").iterator().next();
+			placeOneZumbi = world.getPlacesOfType("PlaceOneZumbi").iterator().next();
+			placeTwoZumbi = world.getPlacesOfType("PlaceTwoZumbi").iterator().next();
+			placeThreeZumbi = world.getPlacesOfType("PlaceThreeZumbi").iterator().next();
+			placeFourZumbi = world.getPlacesOfType("PlaceFourZumbi").iterator().next();
+			placeFiveZumbi = world.getPlacesOfType("PlaceFiveZumbi").iterator().next();
+			placeSixZumbi = world.getPlacesOfType("PlaceSixZumbi").iterator().next();
+			placeSevenZumbi = world.getPlacesOfType("PlaceSevenZumbi").iterator().next();
+
+			places =  Arrays.asList(placeOneZumbi, placeTwoZumbi,
+					placeThreeZumbi, placeFourZumbi, placeFiveZumbi,
+					placeSixZumbi, placeSevenZumbi);
 		} catch (PlaceTypeUndefinedException e) {
 			throw new RuntimeException(e);
 		}
+
+		System.out.println("Creating " + POPULATION * places.size() + " pet.");
+		ArrayList<Agent> population = AgentGenerator.createRandomPopulation(POPULATION,
+				places, world);
 
 		dog = population.get(0);
 		dog.setName("dog-100");
@@ -132,38 +129,6 @@ public class AgentModel extends BaseAgentModel {
 		dog.setPos(placeHome.getPos());
 		dog.setSpeed(2);
 		dog.getControl();
-
-		Agent horse = population.get(1);
-		horse.setName("horse-103");
-		horse.setImage("Horse");
-		horse.setPos(placeOneZumbi.getPos());
-		horse.setSpeed(10);
-
-		Agent duck = population.get(2);
-		duck.setName("duck-104");
-		duck.setImage("Duck");
-		duck.setPos(placeTwoZumbi.getPos());
-		duck.setSpeed(10);
-
-		cat = population.get(3);
-		cat.setName("cat-101");
-		cat.setImage("cat");
-		cat.setPos(placeHome.getPos());
-		cat.setSpeed(10);
-		cat.getControl();
-
-		Agent horseTwo = population.get(4);
-		horseTwo.setName("horse-108");
-		horseTwo.setImage("Horse");
-		horseTwo.setPos(placeOneZumbi.getPos());
-		horseTwo.setSpeed(10);
-
-		Agent duckTwo = population.get(5);
-		duckTwo.setName("duck-110");
-		duckTwo.setImage("Duck");
-		duckTwo.setPos(placeTwoZumbi.getPos());
-		duckTwo.setSpeed(10);
-
 
 		return population;
 	}
@@ -180,12 +145,11 @@ public class AgentModel extends BaseAgentModel {
 		now = new EasyTime(time.get(Calendar.HOUR_OF_DAY), time
 				.get(Calendar.MINUTE));
 		handleDog();
-		handleCat();
 		for (Agent a : agents) {
 			if (!a.isOnAuto()) {
 				continue; // This guy's being managed by the user interface
 			}
-			if (a.equals(dog) || a.equals(cat)) {
+			if (a.equals(dog)) {
 				continue;
 			}
 			handleDog(a);
@@ -202,49 +166,7 @@ public class AgentModel extends BaseAgentModel {
 				- Math.abs(POSTMAN_PEAK - now.getHour()));
 		if (dog.isAtDestination()) {
 			if (dog.getPos().equals(placeHome.getPos())) {
-				dog.setDestination(placeOne);
-			} else if(dog.getPos().equals(placeOne.getPos())) {
-				dog.setDestination(placeTwo);
-			} else if(dog.getPos().equals(placeTwo.getPos())) {
-				dog.setDestination(placeThree);
-			} else if(dog.getPos().equals(placeThree.getPos())) {
-				dog.setDestination(placeFour);
-			} else if(dog.getPos().equals(placeFour.getPos())) {
-				dog.setDestination(placeFive);
-			} else if(dog.getPos().equals(placeFive.getPos())) {
-				dog.setDestination(placeSix);
-			} else if(dog.getPos().equals(placeSix.getPos())) {
-				dog.setDestination(placeSeven);
-			} else if(dog.getPos().equals(placeSeven.getPos())) {
-				//world.stopSpinning(true);
 				dog.setDestination(placeHome);
-			}
-		}
-	}
-
-	private void handleCat() {
-		cat.setSpeed(POSTMAN_PEAK
-				- Math.abs(POSTMAN_PEAK - now.getHour()));
-		if (cat.isAtDestination()) {
-			if (cat.getPos().equals(placeHome.getPos())) {
-				new java.util.Timer().schedule(
-						new java.util.TimerTask() {
-							@Override
-							public void run() {
-								cat.setDestination(placeTwo);
-							}
-						},
-						3000
-				);
-			} else if(cat.getPos().equals(placeTwo.getPos())) {
-				cat.setDestination(placeThree);
-			} else if(cat.getPos().equals(placeThree.getPos())) {
-				cat.setDestination(placeSix);
-			} else if(cat.getPos().equals(placeSix.getPos())) {
-				cat.setDestination(placeSeven);
-			} else if(cat.getPos().equals(placeSeven.getPos())) {
-				//world.stopSpinning(true);
-				cat.setDestination(placeHome);
 			}
 		}
 	}

@@ -305,7 +305,7 @@ public class Simulation implements Runnable {
 	private void moveAgents() {
 		for (Agent a : world.getPeople()) {
 
-			publishAgentCoordinateBroker(a);
+			//publishAgentCoordinateBroker(a);
 
 			if (!isPaused() || !a.isOnAuto()) {
 				a.moveTowardsDestination();
