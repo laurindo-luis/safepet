@@ -19,7 +19,7 @@
 
 package de.nec.nle.siafu.safepet;
 
-import static de.nec.nle.siafu.safepet.Constants.POPULATION;
+import static de.nec.nle.siafu.safepet.Constants.POPULATION_OF_POINTS;
 import static de.nec.nle.siafu.safepet.Constants.Fields.ACTIVITY;
 
 import java.util.*;
@@ -119,16 +119,20 @@ public class AgentModel extends BaseAgentModel {
 			throw new RuntimeException(e);
 		}
 
-		System.out.println("Creating " + POPULATION * places.size() + " pet.");
-		ArrayList<Agent> population = AgentGenerator.createRandomPopulation(POPULATION,
+		int totalPetNumbers = POPULATION_OF_POINTS * places.size();
+
+		System.out.println("Creating " + totalPetNumbers + " pets zumbis.");
+		ArrayList<Agent> population = AgentGenerator.createRandomPopulation(POPULATION_OF_POINTS,
 				places, world);
 
-		dog = population.get(0);
-		dog.setName("dog-100");
-		dog.setImage("Dog");
-		dog.setPos(placeHome.getPos());
-		dog.setSpeed(2);
-		dog.getControl();
+		/** Creating controlled pets home one */
+		System.out.println("Home one");
+
+		dog = AgentGenerator.createConttoledAgent(placeHome.getPos(),
+				"Dog", String.format("dog-%d", totalPetNumbers+1), world);
+		population.add(dog);
+		System.out.println(dog.getName());
+
 
 		return population;
 	}

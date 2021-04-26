@@ -24,6 +24,7 @@ import java.util.*;
 import de.nec.nle.siafu.exceptions.PlaceNotFoundException;
 import de.nec.nle.siafu.model.Agent;
 import de.nec.nle.siafu.model.Place;
+import de.nec.nle.siafu.model.Position;
 import de.nec.nle.siafu.model.World;
 import de.nec.nle.siafu.types.Publishable;
 import de.nec.nle.siafu.types.Text;
@@ -38,7 +39,7 @@ import static de.nec.nle.siafu.safepet.Constants.Fields.ACTIVITY;
  */
 final class AgentGenerator {
 
-	private static int idPet = 0;
+	private static int idPet = 1;
 
 	/**
 	 * A random number generator.
@@ -117,4 +118,14 @@ final class AgentGenerator {
 		return info;
 	}
 
+	public static Agent createConttoledAgent(Position start, String typeAgent, String nameAgent, World world) {
+		Agent agent = new Agent(start, typeAgent, world);
+		agent.setName(nameAgent);
+		agent.setPos(start);
+		agent.setSpeed(2);
+		agent.getControl();
+		agent.set(ACTIVITY, Constants.Activity.WALKING);
+		agent.setVisible(true);
+		return agent;
+	}
 }
