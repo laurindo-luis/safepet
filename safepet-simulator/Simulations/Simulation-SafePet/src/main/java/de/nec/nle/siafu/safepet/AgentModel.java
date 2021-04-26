@@ -70,6 +70,8 @@ public class AgentModel extends BaseAgentModel {
 
 	/** Place one in the simulation. */
 	private Place placeHome;
+	private Place placeHomeTwo;
+	private Place placeHomeThree;
 	private Place placeOneZumbi;
 	private Place placeTwoZumbi;
 	private Place placeThreeZumbi;
@@ -104,6 +106,8 @@ public class AgentModel extends BaseAgentModel {
 
 		try {
 			placeHome = world.getPlacesOfType("Home").iterator().next();
+			placeHomeTwo = world.getPlacesOfType("HomeTwo").iterator().next();
+			placeHomeThree = world.getPlacesOfType("HomeThree").iterator().next();
 			placeOneZumbi = world.getPlacesOfType("PlaceOneZumbi").iterator().next();
 			placeTwoZumbi = world.getPlacesOfType("PlaceTwoZumbi").iterator().next();
 			placeThreeZumbi = world.getPlacesOfType("PlaceThreeZumbi").iterator().next();
@@ -128,7 +132,7 @@ public class AgentModel extends BaseAgentModel {
 		/** Creating controlled pets home one */
 		System.out.println("Home one");
 
-		dog = AgentGenerator.createConttoledAgent(placeHome.getPos(),
+		dog = AgentGenerator.createConttroledAgent(placeHome.getPos(),
 				"Dog", String.format("dog-%d", totalPetNumbers+1), world);
 		population.add(dog);
 		System.out.println(dog.getName());
