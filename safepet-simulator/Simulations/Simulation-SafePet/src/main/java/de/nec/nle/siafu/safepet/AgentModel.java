@@ -61,7 +61,9 @@ public class AgentModel extends BaseAgentModel {
 	/**
 	 * A special user that plays a courrier of the Czar.
 	 */
-	private Agent dog;
+	private Agent dogOne;
+	private Agent dogTwo;
+	private Agent catOne;
 
 	/**
 	 * The current time.
@@ -70,6 +72,8 @@ public class AgentModel extends BaseAgentModel {
 
 	/** Place one in the simulation. */
 	private Place placeHome;
+	private Place placeHomeTwo;
+	private Place placeHomeThree;
 	private Place placeOneZumbi;
 	private Place placeTwoZumbi;
 	private Place placeThreeZumbi;
@@ -104,6 +108,8 @@ public class AgentModel extends BaseAgentModel {
 
 		try {
 			placeHome = world.getPlacesOfType("Home").iterator().next();
+			placeHomeTwo = world.getPlacesOfType("HomeTwo").iterator().next();
+			placeHomeThree = world.getPlacesOfType("HomeThree").iterator().next();
 			placeOneZumbi = world.getPlacesOfType("PlaceOneZumbi").iterator().next();
 			placeTwoZumbi = world.getPlacesOfType("PlaceTwoZumbi").iterator().next();
 			placeThreeZumbi = world.getPlacesOfType("PlaceThreeZumbi").iterator().next();
@@ -128,10 +134,23 @@ public class AgentModel extends BaseAgentModel {
 		/** Creating controlled pets home one */
 		System.out.println("Home one");
 
-		dog = AgentGenerator.createConttoledAgent(placeHome.getPos(),
+		dogOne = AgentGenerator.createConttroledAgent(placeHome.getPos(),
 				"Dog", String.format("dog-%d", totalPetNumbers+1), world);
-		population.add(dog);
-		System.out.println(dog.getName());
+		population.add(dogOne);
+		System.out.println(dogOne.getName());
+
+		dogTwo = AgentGenerator.createConttroledAgent(placeHome.getPos(),
+				"Dog", String.format("dog-%d", totalPetNumbers+2), world);
+		population.add(dogTwo);
+		System.out.println(dogTwo.getName());
+
+		catOne = AgentGenerator.createConttroledAgent(placeHome.getPos(),
+				"cat", String.format("cat-%d", totalPetNumbers+3), world);
+		population.add(catOne);
+		System.out.println(catOne.getName());
+
+		/** Creating controlled pets home two */
+		System.out.println("Home two");
 
 
 		return population;
@@ -148,15 +167,17 @@ public class AgentModel extends BaseAgentModel {
 		Calendar time = world.getTime();
 		now = new EasyTime(time.get(Calendar.HOUR_OF_DAY), time
 				.get(Calendar.MINUTE));
-		handleDog();
+		handleDogOne();
+		handleDogTwo();
+		handleCatOne();
 		for (Agent a : agents) {
 			if (!a.isOnAuto()) {
 				continue; // This guy's being managed by the user interface
 			}
-			if (a.equals(dog)) {
+			if (a.equals(dogOne) || a.equals(dogTwo) || a.equals(catOne)) {
 				continue;
 			}
-			handleDog(a);
+			handleAgent(a);
 		}
 	}
 
@@ -165,12 +186,56 @@ public class AgentModel extends BaseAgentModel {
 	 * closer to noon it is.
 	 *
 	 */
-	private void handleDog() {
-		dog.setSpeed(POSTMAN_PEAK
+	private void handleDogOne() {
+		dogOne.setSpeed(POSTMAN_PEAK
 				- Math.abs(POSTMAN_PEAK - now.getHour()));
-		if (dog.isAtDestination()) {
-			if (dog.getPos().equals(placeHome.getPos())) {
-				dog.setDestination(placeHome);
+		if (dogOne.isAtDestination()) {
+			if (dogOne.getPos().equals(placeHome.getPos())) {
+				dogOne.setDestination(placeThreeZumbi);
+			} else if(dogOne.getPos().equals(placeThreeZumbi.getPos())) {
+				dogOne.setDestination(placeOneZumbi);
+			} else if(dogOne.getPos().equals(placeOneZumbi.getPos())) {
+				dogOne.setDestination(placeHome);
+			}
+		}
+	}
+
+	private void handleDogTwo() {
+		dogTwo.setSpeed(POSTMAN_PEAK
+				- Math.abs(POSTMAN_PEAK - now.getHour()));
+		if (dogTwo.isAtDestination()) {
+			if (dogTwo.getPos().equals(placeHome.getPos())) {
+				//Sair depois de 3 segundos
+				new Timer().schedule(new TimerTask() {
+					@Override
+					public void run() {
+						dogTwo.setDestination(placeTwoZumbi);
+					}
+				}, 2000);
+			} else if(dogTwo.getPos().equals(placeTwoZumbi.getPos())) {
+				dogTwo.setDestination(placeSevenZumbi);
+			} else if(dogTwo.getPos().equals(placeSevenZumbi.getPos())) {
+				dogTwo.setDestination(placeHome);
+			}
+		}
+	}
+
+	private void handleCatOne() {
+		catOne.setSpeed(POSTMAN_PEAK
+				- Math.abs(POSTMAN_PEAK - now.getHour()));
+		if (catOne.isAtDestination()) {
+			if (catOne.getPos().equals(placeHome.getPos())) {
+				//Sair depois de 4 segundos
+				new Timer().schedule(new TimerTask() {
+					@Override
+					public void run() {
+						catOne.setDestination(placeSevenZumbi);
+					}
+				}, 3000);
+			} else if(catOne.getPos().equals(placeSevenZumbi.getPos())) {
+				catOne.setDestination(placeFourZumbi);
+			} else if(catOne.getPos().equals(placeFourZumbi.getPos())) {
+				catOne.setDestination(placeHome);
 			}
 		}
 	}
@@ -180,7 +245,7 @@ public class AgentModel extends BaseAgentModel {
 	 *
 	 * @param a the agent to zombiefy
 	 */
-	private void handleDog(final Agent a) {
+	private void handleAgent(final Agent a) {
 		switch ((Activity) a.get(ACTIVITY)) {
 			case WAITING:
 				break;

@@ -118,7 +118,7 @@ final class AgentGenerator {
 		return info;
 	}
 
-	public static Agent createConttoledAgent(Position start, String typeAgent, String nameAgent, World world) {
+	public static Agent createConttroledAgent(Position start, String typeAgent, String nameAgent, World world) {
 		Agent agent = new Agent(start, typeAgent, world);
 		agent.setName(nameAgent);
 		agent.setPos(start);
