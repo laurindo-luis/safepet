@@ -6,9 +6,9 @@
 		background map? Use decimal degrees. 
 		Hint: http://www.fcc.gov/mb/audio/bickel/DDDMMSS-decimal.html  -->
 	<calibration>
-		<topright    latitude="-5.5086148771191885" longitude="-43.19339346732686"/>
-		<bottomright latitude="-5.531117612646115" longitude="-43.19354519597535"/>
-		<bottomleft  latitude="-5.531238430395926"  longitude="-43.21590999876215"/>
+		<topright    latitude="-5.508409995282205" longitude="-43.193279742424544"/>
+		<bottomright latitude="-5.530855533934176" longitude="-43.19341258809516"/>
+		<bottomleft  latitude="-5.531026464690729"  longitude="-43.215928141115"/>
 	</calibration>
 	<!-- How many seconds does each simulation iteration represent-->
 	<iterationstep>30</iterationstep>

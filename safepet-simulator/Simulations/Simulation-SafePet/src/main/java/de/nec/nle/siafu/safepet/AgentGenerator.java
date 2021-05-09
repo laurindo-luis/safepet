@@ -60,6 +60,7 @@ final class AgentGenerator {
 		Agent a = new Agent(place.getPos(), typePet, world);
 		a.set(ACTIVITY, Constants.Activity.WALKING);
 		a.setName(namePet);
+		a.setSpeed(1);
 		a.setVisible(true);
 		return a;
 	}
@@ -122,7 +123,7 @@ final class AgentGenerator {
 		Agent agent = new Agent(start, typeAgent, world);
 		agent.setName(nameAgent);
 		agent.setPos(start);
-		agent.setSpeed(2);
+		agent.setSpeed(1);
 		agent.getControl();
 		agent.set(ACTIVITY, Constants.Activity.WALKING);
 		agent.setVisible(true);
