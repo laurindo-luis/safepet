@@ -27,7 +27,43 @@ public class CepEngine {
         compilerArguments = new CompilerArguments(configuration);
         epCompiler = EPCompilerProvider.getCompiler();
         epRuntime = EPRuntimeProvider.getDefaultRuntime(configuration);
+    }
 
+    public static void compiledAndDeploy(Monitor monitor) {
+        boolean isDeploy = epRuntime.getDeploymentService()
+                .isDeployed(monitor.getRuleId());
+        if(!isDeploy) {
+            System.out.println("\n*Creating EPL");
+            EPCompiled compiledRule = null;
+            try {
+                compiledRule = epCompiler.compile(String.format("@name('%s') %s",
+                        monitor.getRuleName(), monitor.getRuleEpl()), compilerArguments);
+            } catch (EPCompileException e) {
+                e.printStackTrace();
+            }
+
+            EPDeployment epDeployment;
+            try {
+                epDeployment = epRuntime.getDeploymentService().deploy(
+                        compiledRule, new DeploymentOptions().setDeploymentId(monitor.getRuleId())
+                );
+
+                EPStatement statement = epRuntime.getDeploymentService()
+                        .getStatement(epDeployment.getDeploymentId(), monitor.getRuleName());
+                statement.addListener(updateListener);
+
+                //Name da EPL no ambiente de execução
+                System.out.println("EPL Name: "+statement.getName());
+                //Id da EPL no ambiente de execução
+                System.out.println("EPL Id: "+epDeployment.getDeploymentId());
+                //EPL
+                System.out.println("EPL: "+monitor.getRuleEpl());
+                //EPL Criada
+                System.out.println("*EPL Created");
+            } catch (EPDeployException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void sendEvent(Object object, String nameEventSensor) {
