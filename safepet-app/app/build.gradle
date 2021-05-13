@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
 
     packagingOptions {//plus this code
-        pickFirst 'META-INF/*'
+        exclude 'META-INF/*'
     }
 
     defaultConfig {
@@ -40,4 +40,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.hivemq:hivemq-mqtt-client:1.2.1'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
+    implementation group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.1.0'
+    // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.android.service
+    implementation group: 'org.eclipse.paho', name: 'org.eclipse.paho.android.service', version: '1.1.1'
+
 }
