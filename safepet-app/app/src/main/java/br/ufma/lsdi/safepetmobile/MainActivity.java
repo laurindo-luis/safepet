@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 
+import br.ufma.lsdi.safepetmobile.mqtt.LocalBrokerMqtt;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
         textViewStatus = findViewById(R.id.textViewStatus);
         textViewDistance = findViewById(R.id.textViewDistance);
+
+        client = LocalBrokerMqtt.connect(getApplicationContext(), "10.0.2.2", "appSafePet");
 
     }
 
