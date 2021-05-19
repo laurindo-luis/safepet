@@ -42,7 +42,22 @@ public class Start {
             e.printStackTrace();
         }
 
-        
+        try {
+            client.subscribe("create/epl", (topic, message) -> {
+                String[] payload = new String(message.getPayload()).split(";");
+                Integer idPet = Integer.valueOf(payload[0]);
+                Double radius = Double.valueOf(payload[1]);
+                String coordinater = payload[2];
+
+                //Criando uma EPL de saida e entrada para o pet
+                CepEngine.compiledAndDeploy(new MonitorInPet(idPet, radius,
+                        Parse.parseCoordinater(coordinater)));
+                CepEngine.compiledAndDeploy(new MonitorOutPet(idPet, radius,
+                        Parse.parseCoordinater(coordinater)));
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
         System.out.println("Esper CEP Service started!");
     }
 }
