@@ -27,6 +27,7 @@ public class CepEngine {
         compilerArguments = new CompilerArguments(configuration);
         epCompiler = EPCompilerProvider.getCompiler();
         epRuntime = EPRuntimeProvider.getDefaultRuntime(configuration);
+        createUpdateListener();
     }
 
     public static void compiledAndDeploy(Monitor monitor) {
@@ -69,5 +70,29 @@ public class CepEngine {
     public static void sendEvent(Object object, String nameEventSensor) {
         epRuntime.getEventService().sendEventBean(object, nameEventSensor);
     }
+    public static void createUpdateListener() {
+        updateListener = (newData, oldData, epStatement, epRuntime) -> {
+            //Aqui acontece as ações quando um evento complexo é gerado
+            for (EventBean eventBean : newData) {
+                String typeEvent = "";
+                StringBuilder payload = new StringBuilder();
 
+                if(epStatement.getName().equals("epl-location-in")) {
+                    typeEvent = "in";
+                } else if(epStatement.getName().equals("epl-location-out")) {
+                    typeEvent = "out";
+                }
+
+                String[] propertyNames = eventBean.getEventType().getPropertyNames();
+                for (String propertyName : propertyNames) {
+                    payload.append(";").append(eventBean.get(propertyName));
+                }
+
+                //event/status/out;72;-5.55445,-45.8454;distance
+                String topic = String.format("event/status/%s", eventBean.get("idPet"));
+                payload.insert(0, typeEvent);
+                LocalBrokerMqtt.publish(mqttClient, topic, payload.toString());
+            }
+        };
+    }
 }

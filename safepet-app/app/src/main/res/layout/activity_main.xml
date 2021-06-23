@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="50px"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Id do Pet"
+        android:textAlignment="center"
+        android:textSize="6pt" />
+
+    <EditText
+        android:id="@+id/editTextIdPet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10px"
+        android:text="Localização da Casa"
+        android:textAlignment="center"
+        android:textSize="6pt" />
+
+    <EditText
+        android:id="@+id/editTextLocationHouse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-5.512638352723324,-43.21173949860797"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Raio seguro (metros)"
+        android:textAlignment="center"
+        android:textSize="6pt" />
+
+    <EditText
+        android:id="@+id/editTextRadius"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cadastrar pet"
+        android:onClick="save"/>
+
+    <TextView
+        android:id="@+id/textViewStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50px"
+        android:text="Status"
+        android:textAlignment="center"
+        android:textSize="14pt"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/textViewDistance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Distance"
+        android:textAlignment="center"
+        android:textSize="12pt"
+        android:textStyle="bold"/>
+
+</LinearLayout>
