@@ -13,20 +13,23 @@ import com.espertech.esper.compiler.client.EPCompilerProvider;
 import com.espertech.esper.runtime.client.*;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class CepEngine {
     private static CompilerArguments compilerArguments;
     private static EPCompiler epCompiler;
     private static EPRuntime epRuntime;
     private static UpdateListener updateListener;
-    private static MqttClient mqttClient = null;
+    private static ExecutorService executorService;
 
-    public static void configure (MqttClient client) {
-        mqttClient = client;
+    public static void configure () {
         Configuration configuration = new Configuration();
         configuration.getCommon().addEventType(LocationUpdate.class);
         compilerArguments = new CompilerArguments(configuration);
         epCompiler = EPCompilerProvider.getCompiler();
         epRuntime = EPRuntimeProvider.getDefaultRuntime(configuration);
+        executorService = Executors.newSingleThreadExecutor();
         createUpdateListener();
     }
 
@@ -71,6 +74,9 @@ public class CepEngine {
         epRuntime.getEventService().sendEventBean(object, nameEventSensor);
     }
     public static void createUpdateListener() {
+        MqttClient mqttClientPubishEventComplex =
+                LocalBrokerMqtt.connect("127.0.0.1", "clientEsperCepClientPubishEventComplex");
+
         updateListener = (newData, oldData, epStatement, epRuntime) -> {
             //Aqui acontece as ações quando um evento complexo é gerado
             for (EventBean eventBean : newData) {
@@ -91,7 +97,9 @@ public class CepEngine {
                 //event/status/out;72;-5.55445,-45.8454;distance
                 String topic = String.format("event/status/%s", eventBean.get("idPet"));
                 payload.insert(0, typeEvent);
-                LocalBrokerMqtt.publish(mqttClient, topic, payload.toString());
+                executorService.execute(() ->
+                        LocalBrokerMqtt.publish(mqttClientPubishEventComplex, topic, payload.toString())
+                );
             }
         };
     }

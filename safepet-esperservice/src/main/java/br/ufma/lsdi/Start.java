@@ -11,6 +11,9 @@ import org.apache.log4j.varia.NullAppender;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * tópico para gerar uma epl :  create/epl/id_pet;distance;location_home
  * tópico para enviar um evento complexo para o android: event/status/type_event;id_pet;distance;coordenada_atual
@@ -22,17 +25,15 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  */
 public class Start {
 
-    static MqttClient client = null;
-
     public static void main(String[] args) {
 
         //Remover um alerta que aparece no terminal
         BasicConfigurator.configure(new NullAppender());
 
-        client = LocalBrokerMqtt.connect("127.0.0.1", "clientEsperCep");
-        CepEngine.configure(client);
+        CepEngine.configure();
         try {
-            client.subscribe("+/+/sensor/gps", (topic, message) ->
+            MqttClient clientInputEvent = LocalBrokerMqtt.connect("127.0.0.1", "clientEsperCepInputEvent");
+            clientInputEvent.subscribe("+/+/sensor/gps", (topic, message) ->
                     CepEngine.sendEvent(
                         Parse.parseLocationUpdate(topic, message),
                         LocationUpdate.getNameEvent()
@@ -43,7 +44,8 @@ public class Start {
         }
 
         try {
-            client.subscribe("create/epl", (topic, message) -> {
+            MqttClient clientInputCreateEpl = LocalBrokerMqtt.connect("127.0.0.1", "clientEsperCepInputCreateEpl");
+            clientInputCreateEpl.subscribe("create/epl", (topic, message) -> {
                 String[] payload = new String(message.getPayload()).split(";");
                 Integer idPet = Integer.valueOf(payload[0]);
                 Double radius = Double.valueOf(payload[1]);

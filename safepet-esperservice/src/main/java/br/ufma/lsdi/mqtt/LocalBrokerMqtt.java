@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 public class LocalBrokerMqtt {
 
     public static MqttClient connect(String ip, String id) {
-        System.out.println("Connecting broker...");
+        System.out.println(String.format("%s connecting broker...", id));
         MqttClient client = null;
         try {
             client = new MqttClient(String.format("tcp://%s", ip), id);
@@ -19,7 +19,7 @@ public class LocalBrokerMqtt {
             mqttConnectOptions.setAutomaticReconnect(true);
             mqttConnectOptions.setCleanSession(true);
             client.connect(mqttConnectOptions);
-            System.out.println("Connected!");
+            System.out.println(String.format("%s connected", id));
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -27,15 +27,11 @@ public class LocalBrokerMqtt {
     }
 
     public static void publish(MqttClient client, String topic, String payload) {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(() -> {
-            MqttMessage message = new MqttMessage(payload.getBytes());
-            try {
-                client.publish(topic, message);
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
-        });
-        executorService.shutdown();
+        MqttMessage message = new MqttMessage(payload.getBytes());
+        try {
+            client.publish(topic, message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 }
